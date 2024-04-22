@@ -19,7 +19,7 @@ const useLocation = () => {
     const getCountryStates = (countryCode: string) => {
         return State.getAllStates().filter((state) => state.countryCode === countryCode);
     }
-    const getStateCities = (countryCode: string, stateCode?: string) => {
+    const getStateCities = (countryCode: string, stateCode: string = '') => {
         return City.getCitiesOfState(countryCode, stateCode);
         // .filter((city) => { city.countryCode === countryCode && city.stateCode === stateCode });
     }
