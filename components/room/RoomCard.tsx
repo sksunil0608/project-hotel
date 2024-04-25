@@ -54,6 +54,8 @@ import { Label } from "../ui/label";
 import { useAuth } from "@clerk/nextjs";
 import useBookRoom from "@/hooks/useBookRoom";
 import calculateTimeDifference from "@/services/calculateTimeDifference";
+import Razorpay from "razorpay";
+import { User, currentUser } from "@clerk/nextjs/server";
 
 interface AddRoomFormProps {
   hotel: Hotel & {
@@ -64,7 +66,7 @@ interface AddRoomFormProps {
 }
 
 const RoomCard = ({ hotel, room, bookings = [] }: AddRoomFormProps) => {
-  const { setRoomData, paymentIntentId, setClientSecret, setPaymentIntentId } =
+  const { setRoomData, paymentId, setPaymentId, orderId, setOrderId } =
     useBookRoom();
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
@@ -78,17 +80,38 @@ const RoomCard = ({ hotel, room, bookings = [] }: AddRoomFormProps) => {
     to: undefined,
   });
   const [totalPrice, setTotalPrice] = useState(room.roomPrice);
-  const [includeDinner, setIncludeDinner] = useState(true);
-  const [includeLunch, setIncludeLunch] = useState(true);
-  const [includeBreakFast, setIncludeBreakFast] = useState(true);
+  const [includeDinner, setIncludeDinner] = useState(false);
+  const [includeLunch, setIncludeLunch] = useState(false);
+  const [includeBreakFast, setIncludeBreakFast] = useState(false);
   const [days, setDays] = useState(1);
   const [hours, setHours] = useState(1);
   const [bookingIsLoading, setBookingIsLoading] = useState(false);
-
+  const [user, setUser] = useState<User | null>(null);
   const [isRoomDeleting, setIsRoomDeleting] = useState(false);
   const { toast } = useToast();
   const { userId } = useAuth();
+
   const router = useRouter();
+  const keyId = process.env.NEXT_PUBLIC_RAZORPAY_ID;
+  if (!keyId) {
+    toast({
+      variant: "destructive",
+      description: "Payment not authorized",
+    });
+  }
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userData = await currentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     const calculatePrice = () => {
@@ -138,6 +161,10 @@ const RoomCard = ({ hotel, room, bookings = [] }: AddRoomFormProps) => {
 
         setTotalPrice(totalPrice);
       } else {
+        toast({
+          variant: "destructive",
+          description: "Ensure you have selected Date and Time",
+        });
         setTotalPrice(room.roomPrice);
       }
     };
@@ -201,16 +228,22 @@ const RoomCard = ({ hotel, room, bookings = [] }: AddRoomFormProps) => {
     }
   };
   const handleBookRoom = async () => {
-    if (!userId)
-      return toast({
+    if (!userId) {
+      toast({
         variant: "destructive",
         description: "Oops! Make sure you are logged In",
       });
-    if (!hotel.userId)
-      return toast({
+      return router.push("/sign-in");
+    }
+
+    if (!hotel.userId) {
+      toast({
         variant: "destructive",
-        description: "Something went wrong! refresh the page",
+        description: "Something went wrong! Refresh the page",
       });
+      return;
+    }
+
     if (date?.from && date?.to && time?.from && time?.to) {
       setBookingIsLoading(true);
       const bookingRoomData = {
@@ -224,55 +257,87 @@ const RoomCard = ({ hotel, room, bookings = [] }: AddRoomFormProps) => {
         startTime: time.from,
         endTime: time.to,
       };
+
       setRoomData(bookingRoomData);
-      fetch("/api/create-payment-intent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          booking: {
-            hotelOwnerId: hotel.userId,
-            Hotel: { connect: { id: hotel.id } },
-            Room: { connect: { id: room.id } },
-            startDate: date.from,
-            endDate: date.to,
-            startTime: date.from,
-            endTime: date.to,
-            lunchIncluded: includeLunch,
-            dinnerIncluded: includeDinner,
-            breakFastIncluded: includeBreakFast,
-            totalPrice: totalPrice,
+
+      try {
+        const response = await fetch("/api/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-          payment_intent_id: paymentIntentId,
-        }),
-      })
-        .then((res) => {
-          setBookingIsLoading(false);
-          if (res.status === 401) {
-            return router.push("/login");
-          }
-          return res.json();
-        })
-        .then((data) => {
-          setClientSecret(data.client_secret);
-          setPaymentIntentId(data.id);
-          router.push("/book-room");
-        })
-        .catch((error: any) => {
-          console.log(error);
-          return toast({
-            variant: "destructive",
-            description: `Error ${error.message}`,
-          });
+          body: JSON.stringify({
+            booking: {
+              hotelOwnerId: hotel.userId,
+              Hotel: { connect: { id: hotel.id } },
+              Room: { connect: { id: room.id } },
+              startDate: date.from,
+              endDate: date.to,
+              startTime: date.from,
+              endTime: date.to,
+              lunchIncluded: includeLunch,
+              dinnerIncluded: includeDinner,
+              breakFastIncluded: includeBreakFast,
+              totalPrice: totalPrice,
+            },
+            orderId: orderId,
+          }),
         });
+
+        if (response.status === 401) {
+          router.push("/login");
+          return;
+        }
+
+        const order = await response.json();
+        if (order && order.id) {
+          setOrderId(order.id);
+
+          const orderData = {
+            key_id: keyId as string,
+            amount: totalPrice,
+            currency: "INR",
+            order_id: order.id,
+            handler: function (response: any) {
+              console.log(response);
+              // Handle successful payment response
+              toast({
+                variant: "success",
+                description: "Payment Successfull",
+              });
+              // Redirect or perform further actions after successful payment
+              router.push(`/book-room/${orderId}`);
+            },
+            prefill: {
+              name: user?.firstName || "",
+              email: user?.emailAddresses[0].emailAddress || "",
+            },
+          };
+        } else {
+          // Existing order with successful payment
+          // Handle successful payment (optional: display confirmation message)
+          toast({
+            variant: "success",
+            description: "Booking confirmed!",
+          });
+        }
+      } catch (error: any) {
+        console.log(error);
+        toast({
+          variant: "destructive",
+          description: `Error ${error.message}`,
+        });
+      } finally {
+        setBookingIsLoading(false);
+      }
     } else {
-      return toast({
+      toast({
         variant: "destructive",
-        description: "Oops! Select Date",
+        description: "Oops! Date or Time not selected",
       });
     }
   };
+
   const isRoomDetailsPage = pathname.includes("rooms");
   return (
     <Card>
@@ -392,9 +457,7 @@ const RoomCard = ({ hotel, room, bookings = [] }: AddRoomFormProps) => {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="lunch"
-                          onCheckedChange={(value) =>
-                            setIncludeBreakFast(!!value)
-                          }
+                          onCheckedChange={(value) => setIncludeLunch(!!value)}
                         />
                         <label htmlFor="lunch">Include Lunch</label>
                       </div>

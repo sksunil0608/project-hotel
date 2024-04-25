@@ -38,7 +38,7 @@ const Footer = () => {
                       <div className="mb-6">
                         {/* Replace 'Logo' with your hotel logo */}
                         <Image
-                          src="/hero-bg.jpg"
+                          src="/wellfoodlogo.png"
                           alt="Logo"
                           className="h-30 w-30 mx-auto"
                           width={20}

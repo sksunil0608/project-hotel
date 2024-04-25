@@ -88,7 +88,8 @@ model Booking{
   currency String
   totalPrice Int
   paymentStatus Boolean @default(false)
-  paymentIntentId String
+  paymentId String?
+  orderId String?
   bookedAt DateTime @default(now())
 
   Hotel Hotel? @relation(fields: [hotelId],references: [id])
@@ -96,6 +97,6 @@ model Booking{
 
   @@index([hotelId])
   @@index([roomId])
-  @@unique([paymentIntentId, userId])
+  @@unique([paymentId])
 }
 

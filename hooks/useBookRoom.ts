@@ -1,14 +1,14 @@
 import { Room } from "@prisma/client";
 import { create } from "zustand";
-import { persist } from "zustand/middleware"
+import { persist } from "zustand/middleware";
 
 interface BookRoomStore {
     bookingRoomData: RoomDataType | null;
-    paymentIntentId: string | null;
-    clientSecret: string | undefined;
+    orderId: string | null;
+    paymentId: string | null;
     setRoomData: (data: RoomDataType) => void;
-    setPaymentIntentId: (paymentIntentId: string) => void;
-    setClientSecret: (clientSecret: string) => void;
+    setOrderId: (orderId: string) => void;
+    setPaymentId: (paymentId: string) => void;
     resetBookRoom: () => void;
 }
 
@@ -22,36 +22,33 @@ type RoomDataType = {
     endTime: string;
     lunchIncluded: boolean;
     dinnerIncluded: boolean;
-
-}
+};
 
 const useBookRoom = create<BookRoomStore>()(
     persist((set) => ({
         bookingRoomData: null,
-        paymentIntentId: null,
-        clientSecret: undefined,
+        orderId: null,
+        paymentId: null,
         setRoomData: (data: RoomDataType) => {
-            set({ bookingRoomData: data })
+            set({ bookingRoomData: data });
         },
-        setPaymentIntentId: (paymentIntentId: string) => {
-            set({ paymentIntentId })
+        setOrderId: (orderId: string) => {
+            set({ orderId });
         },
-        setClientSecret: (clientSecret: string) => {
-            set({ clientSecret })
+        setPaymentId: (paymentId: string) => {
+            set({ paymentId });
         },
         resetBookRoom: () => {
             set({
                 bookingRoomData: null,
-                paymentIntentId: null,
-                clientSecret: undefined,
+                orderId: null,
+                paymentId: null,
             });
-        }
+        },
     }),
         {
             name: 'BookRoom'
-        }
-
-    )
+        })
 );
 
 export default useBookRoom;

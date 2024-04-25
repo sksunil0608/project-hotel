@@ -10,7 +10,7 @@ const HeroSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight pt-12 md:pt-20">
-              Welcome to [Your Hotel Name]
+              Welcome to The Well Food Hotel
             </h1>
             <p className="mt-4 text-xl sm:text-2xl">
               Your Ultimate Stay Experience in Jharkhand

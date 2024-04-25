@@ -23,8 +23,16 @@ const NavBar = () => {
             className="flex items-center gap-2"
             onClick={() => router.push("/")}
           >
-            <Image src="/logo.svg" alt="logo" width="30" height="30" />
-            <div>Hotel Sunil</div>
+            <Image
+              className="w-200"
+              src="/wellfoodlogo.png"
+              alt="well food logo"
+              width={50}
+              height={30}
+            />
+            <div className="text-[24px] italic text-yellow-400 font-bold">
+              The well food Hotel
+            </div>
           </div>
           <div className="flex gap-3 items-center">
             <div>

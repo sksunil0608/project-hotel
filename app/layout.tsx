@@ -12,9 +12,9 @@ import { auth } from "@clerk/nextjs/server";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Hotel;",
-  description: "Best Hotel Services",
-  icons: { icon: "/logo.svg" },
+  title: "The Well Food Hotel",
+  description: "Hotel and Food",
+  icons: { icon: "/wellfoodlogo.png" },
 };
 
 export default function RootLayout({

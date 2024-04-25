@@ -14,7 +14,7 @@ export async function PATCH(req: Request, { params }: { params: { Id: string } }
 
         const booking = await prismadb.booking.update({
             where: {
-                paymentIntentId: params.Id,
+                paymentId: params.Id,
             },
             data: { paymentStatus: true },
         })
