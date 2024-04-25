@@ -12,6 +12,7 @@ generator client {
 model Hotel {
   id String @id @default(uuid())
   userId String
+  userEmail String
   title String @db.Text
   description String@db.LongText
   image String
@@ -49,7 +50,10 @@ model Room {
   queenBed Int @default(0)
   image String
   breakFastPrice Int
+  lunchPrice Int
+  dinnerPrice Int
   roomPrice Int
+  perHourPrice Int
   roomService Boolean @default(false)
   TV Boolean @default(false)
   balcony Boolean @default(false)
@@ -70,24 +74,28 @@ model Booking{
   id String @id @default(uuid())
   userName String
   userId String
+  userEmail String
   roomId String
   hotelId String
-  hotelOnwerId String
+  hotelOwnerId String
   startDate DateTime
   endDate DateTime
   startTime DateTime
   endTime DateTime
   breakFastIncluded Boolean
+  dinnerIncluded Boolean
+  lunchIncluded Boolean
   currency String
   totalPrice Int
-    paymentStatus Boolean @default(false)
-    paymentIntentId String
-    bookedAt DateTime @default(now())
+  paymentStatus Boolean @default(false)
+  paymentIntentId String
+  bookedAt DateTime @default(now())
 
   Hotel Hotel? @relation(fields: [hotelId],references: [id])
   Room Room? @relation(fields: [roomId],references: [id])
 
   @@index([hotelId])
   @@index([roomId])
+  @@unique([paymentIntentId, userId])
 }
 

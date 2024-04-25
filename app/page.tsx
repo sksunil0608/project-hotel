@@ -1,18 +1,23 @@
 import HeroSection from "@/components/home/HeroSection";
 import OurExpertiseSection from "@/components/home/OurExpertiseSection";
-import SearchInput from "@/components/home/SearchInput";
+
 import { RoomCarosual } from "@/components/room/RoomCarousal";
 import { Button } from "@/components/ui/button";
-
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
+import { Separator } from "@/components/ui/separator";
+
 import {
   BookOpenIcon,
   ChevronRightIcon,
+  Facebook,
+  FileQuestion,
+  Instagram,
+  Linkedin,
   Mail,
   MapIcon,
   MessagesSquareIcon,
@@ -20,14 +25,27 @@ import {
   Plus,
   Settings2Icon,
   TabletSmartphoneIcon,
+  Twitter,
+  Youtube,
 } from "lucide-react";
 import Image from "next/image";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { getHotelById } from "@/services/getHotelById";
 
-export default function Home() {
+const Home = async () => {
+  const hotelId = process.env.NEXT_PUBLIC_PRISMA_HOTEL_ID;
+  if (!hotelId) return <div>Please provide a valid hotelId!</div>;
+  const hotel = await getHotelById(hotelId);
+  if (!hotel) return <div>OOps Hotel with given Id not found!</div>;
   return (
     <div>
       <HeroSection />
-      <RoomCarosual />
+      <RoomCarosual hotel={hotel} />
       <div className=" py-24 lg:py-12">
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 items-center gap-12">
           {/* Icon Block */}
@@ -186,15 +204,90 @@ export default function Home() {
       </div>
 
       {/* FAQ Section */}
-      <Collapsible>
-        <CollapsibleTrigger>
-          <Plus />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          Yes. Free to use for personal and commercial projects. No attribution
-          required.
-        </CollapsibleContent>
-      </Collapsible>
+      <h1 className="mt-20  text-center font-bold text-[28px]"> FAQs</h1>
+      <div className=" grid grid-cols-1 md:grid-cols-2 gap-4 pb-20 rounded-md border-lg ">
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Is it accessible?</AccordionTrigger>
+            <AccordionContent>
+              Yes. It adheres to the WAI-ARIA design pattern.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
+      <Separator className="border-2 " />
+
+      <div className="mx-auto pt-10 grid grid-cols-1 lg:grid-cols-3 gap-4 items-center text-center">
+        <div>
+          <h1 className="text-2xl">Do you have any other queries?</h1>
+        </div>
+        <div>
+          <Button
+            type="submit"
+            className="py-6 bg-purple-500 px-10 hover:bg-blue-600 text-lg"
+          >
+            Contact Us
+          </Button>
+        </div>
+        <div className="flex justify-center">
+          {/* Social media icons */}
+          <div className="flex flex-wrap justify-center lg:justify-end">
+            <Facebook className="me-2 mr-4 md:mr-10 mb-2 md:mb-0" size={30} />
+            <Instagram className="me-2 mr-4 md:mr-10 mb-2 md:mb-0" size={30} />
+            <Linkedin className="me-2 mr-4 md:mr-10 mb-2 md:mb-0" size={30} />
+            <Twitter className="me-2 mr-4 md:mr-10 mb-2 md:mb-0" size={30} />
+            <Youtube className="me-2 mr-4 md:mr-10 mb-2 md:mb-0" size={30} />
+          </div>
+        </div>
+      </div>
+      <Separator className="border-2 mt-10" />
     </div>
   );
-}
+};
+
+export default Home;

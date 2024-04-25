@@ -6,57 +6,87 @@ import {
   DrawerContent,
   DrawerTrigger,
 } from "../ui/drawer";
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import { useRouter } from "next/navigation";
-import { Contact, HomeIcon, MenuIcon, Store } from "lucide-react";
+import { Contact, HomeIcon, Hotel, MenuIcon, Store } from "lucide-react";
 import { Button } from "../ui/button";
 
 const MobileMenu = () => {
   const router = useRouter();
   return (
     <div>
-      <Drawer direction="right">
-        <DrawerTrigger>
+      <Sheet>
+        <SheetTrigger>
           <MenuIcon />
-        </DrawerTrigger>
-        <DrawerContent className="fixed inset-x-0 bottom-0 mt-24 top-[-10] right-0  w-screen max-w-80 h-full">
-          <div
-            className="cursor-pointer flex gap-2 items-center"
-            onClick={() => router.push("/about")}
-          >
-            <HomeIcon size={15} /> <span>Home</span>
+        </SheetTrigger>
+        <SheetContent className="top-20 rounded-md">
+          <div onClick={() => router.push("/")}>
+            <SheetClose>
+              <div className="flex my-4 gap-2 border py-2 rounded-lg border-purple-500 px-[165px] hover:bg-blue-300">
+                <HomeIcon size={20} /> <span className="text-[18px]">Home</span>
+              </div>
+            </SheetClose>
           </div>
-          <div
-            className="cursor-pointer flex gap-2 items-center"
-            onClick={() => router.push("/about")}
-          >
-            <Store size={15} /> <span>About</span>
+
+          <div className="" onClick={() => router.push("/rooms")}>
+            <SheetClose>
+              <div className="flex gap-2 my-4 border py-2 rounded-lg border-purple-500 px-[165px] hover:bg-blue-300">
+                <Hotel size={20} />
+                <span className="text-[18px]"> Rooms</span>
+              </div>
+            </SheetClose>
           </div>
-          <div
-            className="cursor-pointer flex gap-2 items-center"
-            onClick={() => router.push("contact")}
-          >
-            <Contact size={15} /> <span> Contact</span>
+
+          <div onClick={() => router.push("/about")}>
+            <SheetClose>
+              <div className="flex my-4 gap-2 border py-2 rounded-lg border-purple-500 px-[165px] hover:bg-blue-300">
+                <Store size={20} /> <span className="text-[18px]">About</span>
+              </div>
+            </SheetClose>
           </div>
-          <div>
-            <DrawerClose>
+          <div className="" onClick={() => router.push("contact")}>
+            <SheetClose>
+              <div className="flex gap-2 my-4 border py-2 rounded-lg border-purple-500 px-[165px] hover:bg-blue-300">
+                <Contact size={20} />
+                <span className="text-[18px]"> Contact</span>
+              </div>
+            </SheetClose>
+          </div>
+          <div className="my-4">
+            <SheetClose>
               <Button
                 onClick={() => router.push("/sign-in")}
                 variant="outline"
                 size="sm"
+                className="py-6 px-[185px]"
               >
                 Sign In
               </Button>
-            </DrawerClose>
+            </SheetClose>
           </div>
-          <div>
-            <DrawerClose>
-              <Button onClick={() => router.push("/sign-up")} size="sm">
+          <div className="my-4">
+            <SheetClose>
+              <Button
+                className="py-6 px-[185px]"
+                onClick={() => router.push("/sign-up")}
+                size="sm"
+              >
                 Signup
               </Button>
-            </DrawerClose>
+            </SheetClose>
           </div>
-        </DrawerContent>
-      </Drawer>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };

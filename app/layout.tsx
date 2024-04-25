@@ -7,11 +7,12 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Container from "@/components/Container";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/layout/Footer";
-
+import { SyncActiveOrganization } from "@/components/sync-active-organization";
+import { auth } from "@clerk/nextjs/server";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Vismrit",
+  title: "Hotel;",
   description: "Best Hotel Services",
   icons: { icon: "/logo.svg" },
 };
@@ -21,8 +22,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { sessionClaims } = auth();
+  const membership = sessionClaims?.membership as
+    | Record<string, string>
+    | undefined;
+
   return (
     <ClerkProvider>
+      <SyncActiveOrganization membership={membership} />
       <html lang="en">
         <body className={inter.className}>
           <ThemeProvider

@@ -9,13 +9,14 @@ import { NavMenu } from "./NavMenu";
 import { UserMenu } from "./UserMenu";
 import MobileMenu from "./MobileMenu";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "../ui/button";
 
 const NavBar = () => {
   const router = useRouter();
   const isMobileMenu = useMediaQuery("(max-width:768px)");
-  const { userId } = useAuth();
+
   return (
-    <div className="z-[100] sticky top-0 border-2 border-indigo-500/50 ... bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ... ">
+    <div className="z-[90] sticky top-0 border-2 border-indigo-500/50 ... bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 ... ">
       <Container>
         <div className="flex justify-between items-center">
           <div
@@ -32,7 +33,13 @@ const NavBar = () => {
             {isMobileMenu ? (
               <>
                 <SignedIn>
-                  <UserMenu />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => router.push("/hotel/new")}
+                  >
+                    Dashboard
+                  </Button>
                   <UserButton />
                 </SignedIn>
                 <SignedOut>
@@ -42,7 +49,13 @@ const NavBar = () => {
             ) : (
               <>
                 <SignedIn>
-                  <UserMenu />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => router.push("/dashboard")}
+                  >
+                    Dashboard
+                  </Button>
                   <UserButton />
                 </SignedIn>
                 <SignedOut>

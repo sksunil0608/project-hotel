@@ -51,7 +51,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import AddRoomFrom from "../room/AddRoomFrom";
+import AddRoomFrom from "../room/AddRoomForm";
 import RoomCard from "../room/RoomCard";
 import { Separator } from "../ui/separator";
 
@@ -662,7 +662,6 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="locationDescription"
@@ -679,7 +678,6 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </FormItem>
                 )}
               />
-
               {hotel && !hotel.rooms.length && (
                 <Alert className="bg-indigo-500 text-white mb-10">
                   <AlertTitle>One Last Step!</AlertTitle>
@@ -783,23 +781,29 @@ const AddHotelForm = ({ hotel }: AddHotelFormProps) => {
                   </>
                 )}
               </div>
-              {hotel && !!hotel.rooms.length && (
-                <div>
-                  <Separator />
-                  <h3 className="text-lg font-semibold my-4 ">Hotel Rooms</h3>
-                  <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6">
-                    {hotel.rooms.map((room) => {
-                      return (
-                        <RoomCard key={room.id} hotel={hotel} room={room} />
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              <div
+                onClick={() => router.push("#rooms-section")}
+                className="pt-10 text-center text-2xl text-purple-400"
+              >
+                <h1>You can View and Edit the Hotels Below</h1>
+              </div>
             </div>
           </div>
         </form>
       </Form>
+      <div>
+        {hotel && !!hotel.rooms.length && (
+          <div id="rooms-section">
+            <Separator />
+            <h3 className="text-lg font-semibold my-4 ">Hotel Rooms</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+              {hotel.rooms.map((room) => {
+                return <RoomCard key={room.id} hotel={hotel} room={room} />;
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

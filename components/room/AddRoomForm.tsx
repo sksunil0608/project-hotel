@@ -48,6 +48,9 @@ const formSchema = z.object({
   kingBed: z.coerce.number().min(0),
   queenBed: z.coerce.number().min(0),
   breakFastPrice: z.coerce.number().optional(),
+  lunchPrice: z.coerce.number().optional(),
+  dinnerPrice: z.coerce.number().optional(),
+  perHourPrice: z.coerce.number().optional(),
   roomPrice: z.coerce.number().min(1, { message: "Room Price is required" }),
   roomService: z.boolean().optional(),
   TV: z.boolean().optional(),
@@ -79,7 +82,10 @@ const AddRoomFrom = ({
       bathroomCount: 0,
       kingBed: 0,
       queenBed: 0,
+      perHourPrice: 0,
       breakFastPrice: 0,
+      lunchPrice: 0,
+      dinnerPrice: 0,
       roomPrice: 0,
       roomService: false,
       TV: false,
@@ -462,6 +468,22 @@ const AddRoomFrom = ({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="perHourPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Select Per Hour Price</FormLabel>
+                    <FormDescription>
+                      What are the Charges per hour?
+                    </FormDescription>
+                    <FormControl>
+                      <Input type="number" min={0} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <div className="flex-1 flex flex-col gap-6">
               <FormField
@@ -472,6 +494,40 @@ const AddRoomFrom = ({
                     <FormLabel>BreakFast Price in INR</FormLabel>
                     <FormDescription>
                       What are the Charges for brekfast?
+                    </FormDescription>
+                    <FormControl>
+                      <Input type="number" min={0} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="lunchPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lunch Price in INR</FormLabel>
+                    <FormDescription>
+                      What are the Charges for Lunch?
+                    </FormDescription>
+                    <FormControl>
+                      <Input type="number" min={0} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="dinnerPrice"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Dinner Price in INR</FormLabel>
+                    <FormDescription>
+                      What are the Charges for Dinnner?
                     </FormDescription>
                     <FormControl>
                       <Input type="number" min={0} {...field} />
